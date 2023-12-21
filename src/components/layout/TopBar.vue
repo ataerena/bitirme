@@ -1,25 +1,13 @@
 <script>
-import axios from 'axios'
+import { mapActions } from 'vuex'
 
 export default {
     methods: {
-        async handleFileUpload(event) {
-          const file = event.target.files[0]; // Assuming a single file upload
-          if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            try {
-              await axios.post('http://localhost:8081/upload', formData); // Send file to Node.js script
-            } catch (error) {
-              console.error('Error uploading file:', error);
-              // Handle error
-            }
-          }
-        },
+        ...mapActions(['logout']),
+        logOut() {
+            this.logout();
+        }
     }
-
-
 }
 </script>
 
@@ -40,11 +28,14 @@ export default {
         <div class="col-4 top-buttons-wrapper">
             <div class="col-3 mr-5 top-button" @click="$refs.fileInput.click()">
                 <i class="fa-solid fa-cloud-arrow-up" style="color: rgb(93, 93, 93);"></i>
+                <input type="file" accept="image/*" ref="fileInput" style="display: none;">
                 Upload
             </div>
             <div class="col-1 top-button" style="max-height: inherit;">
-                <input type="file" accept="image/*" ref="fileInput" style="display: none;">
                 <img src="../../assets/images/logo-fav.png" class="img-fluid">
+            </div>
+            <div class="col-1 text-center top-button">
+                <i class="fa-solid fa-arrow-right-from-bracket" @click="logOut"></i>
             </div>
         </div>
     </div>
@@ -99,6 +90,9 @@ export default {
     }
     .top-button:nth-of-type(2):hover{
         filter: drop-shadow( 0 0 5px rgb(190, 190, 252));
+    }
+    .top-button:nth-of-type(3):hover{
+        filter: drop-shadow( 0 0 3px rgb(155, 155, 155));
     }
 
     .home-button{

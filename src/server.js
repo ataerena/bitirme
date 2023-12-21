@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { loginUser } = require('../requests/login');
 
 const app = express();
 
@@ -13,6 +14,8 @@ app.post('/postEndpoint', (req, res) => {
   // Send a response
   res.send('POST request received');
 });
+
+app.post('/login', loginUser);
 
 const PORT = 9000;
 app.listen(PORT, () => {
