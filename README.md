@@ -1,4 +1,4 @@
-# bitirme
+# frontend
 
 ## Project setup
 ```

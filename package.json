@@ -1,5 +1,5 @@
 {
-  "name": "bitirme",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -8,8 +8,20 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@material/web": "^1.0.1",
+    "@mdi/font": "^7.3.67",
+    "@popperjs/core": "^2.11.8",
+    "axios": "^1.6.2",
+    "body-parser": "^1.20.2",
+    "bootstrap": "^5.3.2",
     "core-js": "^3.8.3",
-    "vue": "^3.2.13"
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "mdi-vue3": "^7.3.67",
+    "popper.js": "^1.16.1",
+    "vue": "^3.2.13",
+    "vue-awesome-sidebar": "^1.2.3",
+    "vue-router": "^4.2.5"
   },
   "devDependencies": {
     "@babel/core": "^7.12.16",
