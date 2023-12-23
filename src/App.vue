@@ -1,21 +1,31 @@
 <script>
 import ContentComponent from './components/layout/ContentComponent.vue';
+import RegisterPage from './components/pages/RegisterPage.vue';
 import axios from 'axios';
 
 export default {
   name: 'App',
   components: {
     ContentComponent,
+    RegisterPage,
   },
   mounted(){
-    console.log(localStorage);
+    console.log(sessionStorage);
+    console.log(this.register);
 
-    if(!localStorage.token){
-      localStorage.setItem('token', "");
-      localStorage.setItem('destroyTime', "");
+    if(!sessionStorage.token){
+      sessionStorage.setItem('token', "");
+      sessionStorage.setItem('destroyTime', "");
     }
     else{
-      this.userToken = localStorage.token
+      this.userToken = sessionStorage.token
+    }
+
+    if (!sessionStorage.register) {
+      sessionStorage.setItem('register', false);
+    } 
+    else {
+      this.register = JSON.parse(sessionStorage.getItem('register'));
     }
     
   },
@@ -23,7 +33,10 @@ export default {
     return {
       username: "",
       password: "",
-      userToken: ""
+      showPassword: false,
+      inputType: "password",
+      userToken: "",
+      register: false,
     }
   },
   methods: {
@@ -34,26 +47,43 @@ export default {
         }
         axios.post('/api/login', params)
             .then( res => {
-                localStorage.setItem('token', res.data.token);
-                localStorage.setItem('destroyTime', res.data.destroyTime);
-                this.userToken = localStorage.token;
+                sessionStorage.setItem('token', res.data.token);
+                sessionStorage.setItem('destroyTime', res.data.destroyTime);
+                this.userToken = sessionStorage.token;
                 console.log(res.data.message);
             })
             .catch( err => {
                 console.log(err);
             })
+    },
+    goToRegister(){
+      sessionStorage.setItem('register', true);
+      this.register = true;
     }
   },
   computed: {
     disabledControl(){
-      return !(this.username != "" && this.password != "")
+      return !(this.username != "" && this.password != "" && this.username[0] != " " && !this.password.includes(" "))
     },
     disabledClass(){
       let disabled = ""
-      if (!(this.username != "" && this.password != "")){
+      if (!(this.username != "" && this.password != "" && this.username[0] != " " && !this.password.includes(" "))){
         disabled = 'disabled-button'
       }
       return disabled
+    },
+  },
+  watch: {
+    showPassword: {
+      handler(newVal){
+        if(newVal == true){
+          this.inputType = 'text';
+        }
+        else{
+          this.inputType = 'password'
+        }
+      },
+      immediate: true
     }
   }
 }
@@ -61,21 +91,31 @@ export default {
 
 <template>
   <div>
-    <div class="login-page" v-if="userToken.length != 64">
+    <div class="login-page" v-if="userToken.length != 64 && register == false">
         
         <img src="./assets/images/logo.png">
         <div class="login-card">
             <span class="m-2 row" style="font-size: 1.5em;">Welcome to image processor!</span>
-            <input type="text" ref="username" class="login-input mx-auto m-3 row" placeholder="Username" v-model="username">
-            <input type="password" ref="password" class="login-input mx-auto m-3 row" placeholder="Password" v-model="password">
+            <div class="mx-auto m-3 row">
+              <input type="text" ref="username" class="login-input" placeholder="Username" @keyup.enter="postLogin" v-model="username">
+            </div>
+            <div class="mx-auto m-3 row" style="position: relative;">
+              <input :type="inputType" ref="password" class="login-input " placeholder="Password" @keyup.enter="postLogin" v-model="password">
+              <i class="fa-solid fa-lock toggle-password" v-if="showPassword == false" @click="showPassword = true"></i>
+              <i class="fa-solid fa-unlock toggle-password" v-if="showPassword == true" @click="showPassword = false"></i>
+            </div>
             <button class="login-button mx-auto m-3 row" :class="disabledClass" @click="postLogin" :disabled="disabledControl">
                 Login
             </button>
+            <footer class="register-button" @click="goToRegister">
+              Don't have an account?
+            </footer>
         </div>
 
     </div>
+    <RegisterPage v-if="register == true" />
   
-    <ContentComponent v-else/>
+    <ContentComponent v-if="userToken.length == 64 && register == false"/>
   </div>
 </template>
 
@@ -127,14 +167,32 @@ export default {
   padding-top: .33em;
   padding-bottom: .33em;
   border-radius: 30px;
+  filter: drop-shadow(0 0 3px gray);
 }
 .login-button:active{
   scale: 1.025;
-  filter: drop-shadow(0 0 5px);
+  filter: drop-shadow(0 0 5px gray);
 }
 .disabled-button{
   filter: brightness(120%) !important;
   cursor: default !important;
   pointer-events: none;
+}
+
+.register-button{
+  color: rgb(87, 87, 87);
+}
+.register-button:hover{
+  cursor: pointer;
+  font-weight: bold;
+  text-decoration: underline;
+}
+
+.toggle-password {
+  cursor: pointer;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 17.5em;
 }
 </style>

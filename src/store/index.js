@@ -10,8 +10,9 @@ export default createStore({
   },
   actions: {
     logout() {
-      localStorage.setItem('token', '');
+      sessionStorage.setItem('token', '');
       window.location.reload();
+      console.log(sessionStorage);
     },
   },
 });

@@ -21,20 +21,14 @@ function loginUser(req, res) {
     const user = users.find((user) => user.username === username);
 
     if (user && user.password === password) {
-      // Generate a random token
       const token = generateToken(32);
 
-      // Calculate the token expiration time (1 hour from now)
       const tokenDestroyTime = Date.now() + 3600000; // 3600000 ms = 1 hour
 
-      // You can associate this token with the user or save it for later validation
-      // For demonstration, let's add it to the user object
       /* user.token = {
         value: token,
         destroyTime: tokenDestroyTime,
       }; */
-
-      // Update the users array in memory or save it back to the file/database
 
       res.status(200).json({ message: 'Login successful', token, destroyTime: tokenDestroyTime });
     } else {
