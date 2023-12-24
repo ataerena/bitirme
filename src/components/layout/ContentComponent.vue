@@ -1,7 +1,6 @@
 <script>
 import NavBar from './NavBar.vue';
 import TopBar from './TopBar.vue';
-import axios from 'axios'
 
 export default {
     components: {
@@ -9,28 +8,15 @@ export default {
         TopBar,
     },
     name: 'ContentComponent',
-    mounted(){
-        axios.post('/api/postEndpoint', {'key': 'value'})
-            .then(response => {
-              console.log(response);
-            })
-            .catch(error => {
-              console.error('Error:', error);
-            });
-    }
 }
 </script>
 
 <template>
 
-    <div class="row border-bottom">
-        <TopBar />
-    </div>
-    <div class="bottom-content">
-        <div class="left-nav">
-            <NavBar/>
-        </div>
-        <div class="main">
+    <div class="content-container">
+        <NavBar/>
+        <div class="right-content">
+            <TopBar class="top-bar"/>
             <router-view></router-view>
         </div>
     </div>
@@ -38,17 +24,19 @@ export default {
 </template>
 
 <style scoped>
-
-    .bottom-content{
+    .content-container{
         display: flex;
         flex-direction: row;
+
+        overflow: hidden;
     }
-    .left-nav{
-        position: relative;
+    .right-content{
+        display: flex;
+        flex-direction: column;
+        width: 100%;
     }
-    .main{
-        position: relative;
-        padding: 1.5%;
+    .top-bar{
+        border-bottom: thin solid #093c71;
     }
 
 

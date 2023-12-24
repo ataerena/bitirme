@@ -1,14 +1,11 @@
 <template>
-  <div class="col">
     <VueAwesomeSideBar
       v-model="miniMenu"
       v-model:collapse.sync="collapsed"
       :menu="menu"
       vueRouterEnabel
       position="relative"
-      
     ></VueAwesomeSideBar>
-  </div>
 </template>
 
 <script>

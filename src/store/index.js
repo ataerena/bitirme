@@ -12,7 +12,6 @@ export default createStore({
     logout() {
       sessionStorage.setItem('token', '');
       window.location.reload();
-      console.log(sessionStorage);
     },
   },
 });

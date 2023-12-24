@@ -1,11 +1,33 @@
 <script>
-import { mapActions } from 'vuex'
+import { mapActions } from 'vuex';
+import axios from 'axios';
 
 export default {
+    data(){
+        return{
+            file: null,
+        }
+    },
     methods: {
         ...mapActions(['logout']),
         logOut() {
             this.logout();
+        },
+        async handleFileUpload(event) {
+          const username = sessionStorage.getItem('username');
+          const file = event.target.files[0];
+          const formData = new FormData();
+          formData.append('image', file);
+          formData.append('username', username);
+
+          try {
+            const response = await axios.post('/api/file/upload', formData);
+            // Handle successful response
+            console.log('File uploaded:', response.data);
+          } catch (error) {
+            // Handle error
+            console.error('Error uploading file:', error);
+          }
         }
     }
 }
@@ -28,7 +50,9 @@ export default {
         <div class="col-4 top-buttons-wrapper">
             <div class="col-3 mr-5 top-button" @click="$refs.fileInput.click()">
                 <i class="fa-solid fa-cloud-arrow-up" style="color: rgb(93, 93, 93);"></i>
-                <input type="file" accept="image/*" ref="fileInput" style="display: none;">
+                <input type="file" accept="image/*" style="display: none;" 
+                    ref="fileInput" @change="handleFileUpload($event)"
+                >
                 Upload
             </div>
             <div class="col-1 top-button" style="max-height: inherit;">

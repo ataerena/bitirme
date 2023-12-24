@@ -10,8 +10,6 @@ export default {
     RegisterPage,
   },
   mounted(){
-    console.log(sessionStorage);
-    console.log(this.register);
 
     if(!sessionStorage.token){
       sessionStorage.setItem('token', "");
@@ -49,8 +47,8 @@ export default {
             .then( res => {
                 sessionStorage.setItem('token', res.data.token);
                 sessionStorage.setItem('destroyTime', res.data.destroyTime);
+                sessionStorage.setItem('username', this.username);
                 this.userToken = sessionStorage.token;
-                console.log(res.data.message);
             })
             .catch( err => {
                 console.log(err);
@@ -115,7 +113,7 @@ export default {
     </div>
     <RegisterPage v-if="register == true" />
   
-    <ContentComponent v-if="userToken.length == 64 && register == false"/>
+    <ContentComponent v-if="userToken.length == 64 && register == false" class="content-component"/>
   </div>
 </template>
 

@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 
 import EmptyPage from './components/pages/EmpyPage.vue'
 import RegisterPage from './components/pages/RegisterPage.vue'
+import AllPhotos from './components/pages/AllPhotos.vue'
 
 const routes = [
   {
@@ -14,6 +15,12 @@ const routes = [
     name: 'register',
     component: RegisterPage,
   },
+  {
+    path: '/photos',
+    name: 'Photos',
+    component: AllPhotos,
+  },
+
   // Add more routes as needed
 ];
 

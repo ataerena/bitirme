@@ -84,7 +84,7 @@ export default {
               console.log(res);
             })
             .catch( err => {
-                console.log(err);
+              console.log(err);
             })
             .finally(() => {
               this.goToLogin();
