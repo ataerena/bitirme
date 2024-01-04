@@ -9,7 +9,6 @@ export default {
             showAlbumOptions: false,
             albumOptions: [],
             selectedImageIndex: null,
-            secondLastIndex: null,
         }
     },
     mounted(){
@@ -31,7 +30,7 @@ export default {
             axios.post('/api/getImages', params)
                 .then(response => {
                     response.data.forEach( item => {
-                        if (!item.restricted && !item.deleted){
+                        if (!item.restricted && !item.deleted && item.favorite){
                             this.images.push(item);
                         }
                     });
@@ -88,7 +87,6 @@ export default {
                     this.getImages();
                 })
         },
-
         showOptions(index){
             if (index != this.selectedImageIndex){
                 this.showAlbumOptions = true;
@@ -99,7 +97,7 @@ export default {
             else {
                 this.showAlbumOptions = true
             }
-
+            
             this.selectedImageIndex = index
         }
     }
@@ -137,61 +135,6 @@ export default {
         cursor: pointer;
         filter: drop-shadow(0 0 10px rgb(75, 75, 75));
         scale: 1.0125;
-    }
-
-    .image-buttons-tab{
-        position: absolute;
-        margin-top: .5em;
-        padding-left: .7em;
-        padding-right: .7em;
-        border-bottom: thin solid black;
-        border-top: thin solid black;
-    }
-    .image-buttons-tab i{
-        padding-left: 1em;
-        padding-right: 1em;
-    }
-
-    .favorite-button{
-        color: red;
-    }
-    .favorite-button:hover{
-        cursor: pointer;
-        filter: brightness(85%);
-    }
-    .restrict-button{
-        color: gray;
-    }
-    .restrict-button:hover{
-        cursor: pointer;
-        color: black;
-    }
-    .add-to-album-button{
-        color: gray;
-    }
-    .add-to-album-button:hover{
-        cursor: pointer;
-        color: black;
-    }
-
-    .album-dropdown{
-        position: absolute;
-        bottom: -4.75em;
-        padding-left: .33em;
-        padding-right: .33em;
-        background-color: #e1e1e1;
-        border: thin solid gray;
-    }
-    .album-item{
-        font-weight: 500;
-    }
-    .album-item:hover{
-        cursor: pointer;
-        background-color: rgb(189, 189, 189);
-    }
-    .album-item:nth-of-type(2){
-        border-bottom: thin solid gray;
-        border-top: thin solid gray;
     }
 
 </style>

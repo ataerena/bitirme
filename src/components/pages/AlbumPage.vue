@@ -5,15 +5,16 @@ export default {
     data(){
         return {
             username: "",
+            activeAlbum: "",
             images: [],
             showAlbumOptions: false,
             albumOptions: [],
             selectedImageIndex: null,
-            secondLastIndex: null,
         }
     },
     mounted(){
         this.username = sessionStorage.username;
+        this.activeAlbum = sessionStorage.activeAlbum;
         JSON.parse(sessionStorage.albums).albums.forEach(item => {
             this.albumOptions.push(item)
         });
@@ -31,7 +32,7 @@ export default {
             axios.post('/api/getImages', params)
                 .then(response => {
                     response.data.forEach( item => {
-                        if (!item.restricted && !item.deleted){
+                        if (item.albums.includes(this.activeAlbum) && !item.deleted && !item.restricted){
                             this.images.push(item);
                         }
                     });
@@ -88,7 +89,6 @@ export default {
                     this.getImages();
                 })
         },
-
         showOptions(index){
             if (index != this.selectedImageIndex){
                 this.showAlbumOptions = true;
@@ -99,7 +99,7 @@ export default {
             else {
                 this.showAlbumOptions = true
             }
-
+            
             this.selectedImageIndex = index
         }
     }
@@ -108,6 +108,7 @@ export default {
 
 <template>
   <div class="p-3 row">
+    <div class="album-name">{{ activeAlbum.toUpperCase() }}</div>
     <div class="p-3 col-2 photo-container" v-for="(item, index) in images" :key="index">
         <img :src="`data:${item.base64.mimetype};base64,${item.base64.data.toString('base64')}`" class="photo-image img-fluid">
         <div class="image-buttons-tab">
@@ -125,7 +126,7 @@ export default {
   </div>
 </template>
 
-<style>
+<style scoped>
     .photo-container{
         position: relative;
     }
@@ -139,59 +140,11 @@ export default {
         scale: 1.0125;
     }
 
-    .image-buttons-tab{
-        position: absolute;
-        margin-top: .5em;
-        padding-left: .7em;
-        padding-right: .7em;
+    .album-name{
+        color: rgb(52, 52, 52);
+        font-size: 1.66em;
+        font-weight: bold;
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
         border-bottom: thin solid black;
-        border-top: thin solid black;
     }
-    .image-buttons-tab i{
-        padding-left: 1em;
-        padding-right: 1em;
-    }
-
-    .favorite-button{
-        color: red;
-    }
-    .favorite-button:hover{
-        cursor: pointer;
-        filter: brightness(85%);
-    }
-    .restrict-button{
-        color: gray;
-    }
-    .restrict-button:hover{
-        cursor: pointer;
-        color: black;
-    }
-    .add-to-album-button{
-        color: gray;
-    }
-    .add-to-album-button:hover{
-        cursor: pointer;
-        color: black;
-    }
-
-    .album-dropdown{
-        position: absolute;
-        bottom: -4.75em;
-        padding-left: .33em;
-        padding-right: .33em;
-        background-color: #e1e1e1;
-        border: thin solid gray;
-    }
-    .album-item{
-        font-weight: 500;
-    }
-    .album-item:hover{
-        cursor: pointer;
-        background-color: rgb(189, 189, 189);
-    }
-    .album-item:nth-of-type(2){
-        border-bottom: thin solid gray;
-        border-top: thin solid gray;
-    }
-
 </style>

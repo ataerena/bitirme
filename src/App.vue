@@ -44,15 +44,44 @@ export default {
           password: this.password
         }
         axios.post('/api/login', params)
-            .then( res => {
-                sessionStorage.setItem('token', res.data.token);
-                sessionStorage.setItem('destroyTime', res.data.destroyTime);
-                sessionStorage.setItem('username', this.username);
-                this.userToken = sessionStorage.token;
-            })
-            .catch( err => {
-                console.log(err);
-            })
+          .then( res => {
+            sessionStorage.setItem('token', res.data.token);
+            sessionStorage.setItem('destroyTime', res.data.destroyTime);
+            sessionStorage.setItem('username', this.username);
+            sessionStorage.setItem('password', this.password);
+            this.userToken = sessionStorage.token;
+
+            this.$toast.open({
+              message: res.data.message,
+              type: "success",
+              duration: 5000,
+              dismissible: true,
+            });
+          })
+          .catch( ({response}) => {
+            this.$toast.open({
+              message: response.data.message,
+              type: "error",
+              duration: 5000,
+              dismissible: true,
+            });
+          })
+          .finally( () => {
+            this.getAlbums();
+          })
+    },
+    getAlbums(){
+      const params = {
+        username: this.username
+      }
+      
+      axios.post('/api/get/getAlbums', params)
+        .then( res => {
+          sessionStorage.setItem('albums', JSON.stringify(res.data))
+        })
+        .finally(() => {
+          console.log(sessionStorage);
+        })
     },
     goToRegister(){
       sessionStorage.setItem('register', true);

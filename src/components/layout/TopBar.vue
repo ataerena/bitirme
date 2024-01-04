@@ -22,11 +22,26 @@ export default {
 
           try {
             const response = await axios.post('/api/file/upload', formData);
-            // Handle successful response
-            console.log('File uploaded:', response.data);
-          } catch (error) {
-            // Handle error
-            console.error('Error uploading file:', error);
+            console.log(response);
+            
+            this.$toast.open({
+              message: response.data,
+              type: "success",
+              duration: 5000,
+              dismissible: true,
+            });
+          } 
+          catch ({response}) {
+            this.$toast.open({
+              message: response.data.message,
+              type: "error",
+              duration: 5000,
+              dismissible: true,
+            });
+          }
+
+          finally {
+            window.location.reload();
           }
         }
     }
@@ -36,18 +51,14 @@ export default {
 <template>
     <div class="row p-4 pb-2">
         
-        <div class="col-3">
-            <router-link to="/empty"> <!-- example -->
-                <img src="../../assets/images/logo.png" alt="home" href="/home" class="img-fluid home-button">
-            </router-link>
-        </div>
+        
         <div class="col-5 p-2">
             <div class="search-container">
                 <i class="fa-solid fa-magnifying-glass"></i>
                 <input type="search" placeholder="Search for a photo" class="p-2">
             </div>
         </div>
-        <div class="col-4 top-buttons-wrapper">
+        <div class="col top-buttons-wrapper">
             <div class="col-3 mr-5 top-button" @click="$refs.fileInput.click()">
                 <i class="fa-solid fa-cloud-arrow-up" style="color: rgb(93, 93, 93);"></i>
                 <input type="file" accept="image/*" style="display: none;" 

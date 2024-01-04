@@ -1,15 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import EmptyPage from './components/pages/EmpyPage.vue'
 import RegisterPage from './components/pages/RegisterPage.vue'
 import AllPhotos from './components/pages/AllPhotos.vue'
+import FavoritePhotos from './components/pages/FavoritePhotos.vue'
+import RestrictedPhotos from './components/pages/RestrictedPhotos.vue'
+import AlbumPages from './components/pages/AlbumPage.vue'
+
 
 const routes = [
-  {
-    path: '/empty',
-    name: 'empty',
-    component: EmptyPage,
-  },
   {
     path: '/register',
     name: 'register',
@@ -20,8 +18,22 @@ const routes = [
     name: 'Photos',
     component: AllPhotos,
   },
+  {
+    path: '/favorites',
+    name: 'Favorites',
+    component: FavoritePhotos,
+  },
+  {
+    path: '/restricted',
+    name: 'Restricted',
+    component: RestrictedPhotos,
+  },
+  {
+    path: '/albums',
+    name: 'Albums',
+    component: AlbumPages,
+  },
 
-  // Add more routes as needed
 ];
 
 const router = createRouter({

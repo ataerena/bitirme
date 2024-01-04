@@ -81,10 +81,20 @@ export default {
         }
         axios.post('/api/register', params)
             .then( res => {
-              console.log(res);
+                this.$toast.open({
+                message: res.data.message,
+                type: "success",
+                duration: 5000,
+                dismissible: true,
+              });
             })
-            .catch( err => {
-              console.log(err);
+            .catch( ({response}) => {
+              this.$toast.open({
+                message: response.data.message,
+                type: "error",
+                duration: 5000,
+                dismissible: true,
+              });
             })
             .finally(() => {
               this.goToLogin();
