@@ -31,12 +31,13 @@
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
   mounted(){
-    this.realPassword = sessionStorage.getItem('password');
+    this.username = sessionStorage.getItem('username');
 
-    const albums = JSON.parse(sessionStorage.getItem('albums'))
+    const albums = JSON.parse(sessionStorage.getItem('albums'));
     albums.albums.forEach(item => {
       this.menu[2].children.push({
         name: item,
@@ -66,13 +67,21 @@ export default {
       }
     },
     submitPassword(){
-      if (this.password == this.realPassword){
-        this.cancel();
-        this.$router.push('/restricted')
-      }
-      else {
-        this.wrongPassword = true;
-      }
+      const params = {
+        username: this.username,
+        password: this.password
+      };
+
+      axios.post('/api/auth/reauthenticate', params)
+        .then( res => {
+          console.log(res);
+          this.$router.push('/restricted');
+          this.cancel();
+        })
+        .catch( ({err}) => {
+          console.log(err);
+          this.wrongPassword = true;
+        })
     },
     cancel(){
       this.passwordModal = false;
@@ -87,12 +96,12 @@ export default {
       if (event.key == 'Escape'){
         this.cancel();
       }
-    }
+    },
   },
 
   data() {
     return {
-      realPassword: "",
+      username: "",
       password: "",
       showPassword: false,
       passwordModal: false,

@@ -10,6 +10,8 @@ export default {
             albumOptions: [],
             selectedImageIndex: null,
             secondLastIndex: null,
+            selectedImage: null,
+            selectedImageAlbums: [],
         }
     },
     mounted(){
@@ -89,19 +91,45 @@ export default {
                 })
         },
 
-        showOptions(index){
-            if (index != this.selectedImageIndex){
-                this.showAlbumOptions = true;
-            }
-            else if (this.showAlbumOptions == true && index == this.selectedImageIndex){
-                this.showAlbumOptions = false;
-            }
-            else {
-                this.showAlbumOptions = true
+        showOptions(image){
+            this.selectedImage = image;
+            this.selectedImageAlbums = image.albums;
+        },
+        popFromSelectedAlbums(album){
+            this.selectedImageAlbums = this.selectedImageAlbums.filter( item => item !== album)
+        },
+        addToSelectedAlbums(album){
+            this.selectedImageAlbums.push(album);
+        },
+        resetAlbumChanges(){
+            this.selectedImage = "";
+            this.selectedImageAlbums = [];
+        },
+        updateAlbums(){
+            const params = {
+                username: this.username,
+                imageName: this.selectedImage.name,
+                updates: {
+                    albums: this.selectedImageAlbums
+                }
             }
 
-            this.selectedImageIndex = index
-        }
+            axios.post(`/api/update/updateImage`, params)
+                .then(res => {
+                    this.$toast.open({
+                      message: res.data.message,
+                      type: "success",
+                      duration: 5000,
+                      dismissible: true,
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally( () => {
+                    this.getImages();
+                })
+        },
     }
 }
 </script>
@@ -111,16 +139,47 @@ export default {
     <div class="p-3 col-2 photo-container" v-for="(item, index) in images" :key="index">
         <img :src="`data:${item.base64.mimetype};base64,${item.base64.data.toString('base64')}`" class="photo-image img-fluid">
         <div class="image-buttons-tab">
-            <i class="fa-solid fa-circle-plus add-to-album-button" @click="showOptions(index)"></i>
+            <i class="fa-solid fa-circle-plus add-to-album-button" @click="showOptions(item)"
+                data-bs-toggle="modal" data-bs-target="#albumsModal"
+            >
+            </i>
             <i class="mdi mdi-lock-open restrict-button" @click="makeRestricted(item)"></i>
             <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
             <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
-            <div v-if="showAlbumOptions && (index == selectedImageIndex)" class="album-dropdown">
-                <div class="album-item" v-for="(album, index) in albumOptions" :key="index">
-                    {{ album }}
+        </div>
+    </div>
+
+
+    <div class="modal fade" id="albumsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add to or remove from albums</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row text-center" v-for="album in albumOptions" :key="album">
+                <div class="col" style="font-size: 1.5em;">
+                    <i class="fa-solid fa-square-plus add-to-album-button m-1"
+                        v-if="!selectedImageAlbums.includes(album)"
+                        @click="addToSelectedAlbums(album)"
+                    >
+                    </i>
+                    <i class="fa-solid fa-square-minus add-to-album-button m-1" 
+                        v-if="selectedImageAlbums.includes(album)"
+                        @click="popFromSelectedAlbums(album)"
+                    >
+                    </i>
+                    <span class="add-to-album-text m-1"> {{ album }} </span>
                 </div>
             </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="resetAlbumChanges">Close</button>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="updateAlbums">Save changes</button>
+          </div>
         </div>
+      </div>
     </div>
   </div>
 </template>
@@ -173,25 +232,12 @@ export default {
         cursor: pointer;
         color: black;
     }
-
-    .album-dropdown{
-        position: absolute;
-        bottom: -4.75em;
-        padding-left: .33em;
-        padding-right: .33em;
-        background-color: #e1e1e1;
-        border: thin solid gray;
+    .add-to-album-text{
+        color: black;
     }
-    .album-item{
-        font-weight: 500;
-    }
-    .album-item:hover{
+    .add-to-album-text:hover{
         cursor: pointer;
-        background-color: rgb(189, 189, 189);
     }
-    .album-item:nth-of-type(2){
-        border-bottom: thin solid gray;
-        border-top: thin solid gray;
-    }
+    
 
 </style>

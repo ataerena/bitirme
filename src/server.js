@@ -7,6 +7,7 @@ const fileUploadRouter = require('../requests/fileUpload');
 const getImagesRouter = require('../requests/getImages');
 const updateImageRouter = require('../requests/updateImage');
 const getAlbumsRouter = require('../requests/getAlbums');
+const reauthenticationRouter = require('../requests/reauthentication');
 
 const app = express();
 
@@ -21,6 +22,7 @@ app.use('/file', fileUploadRouter);
 app.post('/getimages', getImagesRouter);
 app.use('/update', updateImageRouter);
 app.use('/get', getAlbumsRouter);
+app.use('/auth', reauthenticationRouter);
 
 const PORT = 9000;
 app.listen(PORT, () => {
