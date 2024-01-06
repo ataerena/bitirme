@@ -48,7 +48,6 @@ export default {
             sessionStorage.setItem('token', res.data.token);
             sessionStorage.setItem('destroyTime', res.data.destroyTime);
             sessionStorage.setItem('username', this.username);
-            sessionStorage.setItem('password', this.password);
             this.userToken = sessionStorage.token;
 
             this.$toast.open({
