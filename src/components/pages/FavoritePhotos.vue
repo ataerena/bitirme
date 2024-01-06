@@ -13,9 +13,6 @@ export default {
     },
     mounted(){
         this.username = sessionStorage.username;
-        JSON.parse(sessionStorage.albums).albums.forEach(item => {
-            this.albumOptions.push(item)
-        });
         this.getImages();
     },
     methods: {
@@ -113,11 +110,6 @@ export default {
             <i class="mdi mdi-lock-open restrict-button" @click="makeRestricted(item)"></i>
             <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
             <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
-            <div v-if="showAlbumOptions && (index == selectedImageIndex)" class="album-dropdown">
-                <div class="album-item" v-for="(album, index) in albumOptions" :key="index">
-                    {{ album }}
-                </div>
-            </div>
         </div>
     </div>
   </div>

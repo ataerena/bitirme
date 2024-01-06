@@ -65,22 +65,6 @@ export default {
               dismissible: true,
             });
           })
-          .finally( () => {
-            this.getAlbums();
-          })
-    },
-    getAlbums(){
-      const params = {
-        username: this.username
-      }
-      
-      axios.post('/api/get/getAlbums', params)
-        .then( res => {
-          sessionStorage.setItem('albums', JSON.stringify(res.data))
-        })
-        .finally(() => {
-          console.log(sessionStorage);
-        })
     },
     goToRegister(){
       sessionStorage.setItem('register', true);

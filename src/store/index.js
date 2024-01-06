@@ -10,7 +10,7 @@ export default createStore({
   },
   actions: {
     logout() {
-      sessionStorage.setItem('token', '');
+      sessionStorage.clear();
       window.location.reload();
     },
   },

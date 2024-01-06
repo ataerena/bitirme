@@ -16,9 +16,6 @@ export default {
     },
     mounted(){
         this.username = sessionStorage.username;
-        JSON.parse(sessionStorage.albums).albums.forEach(item => {
-            this.albumOptions.push(item)
-        });
         this.getImages();
     },
     methods: {
@@ -158,19 +155,19 @@ export default {
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="row text-center" v-for="album in albumOptions" :key="album">
+            <div class="row text-center" v-for="album in ['deneme', 'deneme2', 'deneme3']" :key="album">
                 <div class="col" style="font-size: 1.5em;">
                     <i class="fa-solid fa-square-plus add-to-album-button m-1"
-                        v-if="!selectedImageAlbums.includes(album)"
+                        v-if="false"
                         @click="addToSelectedAlbums(album)"
                     >
                     </i>
                     <i class="fa-solid fa-square-minus add-to-album-button m-1" 
-                        v-if="selectedImageAlbums.includes(album)"
+                        v-if="false"
                         @click="popFromSelectedAlbums(album)"
                     >
                     </i>
-                    <span class="add-to-album-text m-1"> {{ album }} </span>
+                    <span class="add-to-album-text m-1">{{ album }}</span>
                 </div>
             </div>
           </div>

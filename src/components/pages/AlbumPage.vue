@@ -5,146 +5,153 @@ export default {
     data(){
         return {
             username: "",
-            activeAlbum: "",
-            images: [],
-            showAlbumOptions: false,
-            albumOptions: [],
-            selectedImageIndex: null,
+            userAlbums: [],
+            createdAlbumName: "",
         }
     },
     mounted(){
-        this.username = sessionStorage.username;
-        this.activeAlbum = sessionStorage.activeAlbum;
-        JSON.parse(sessionStorage.albums).albums.forEach(item => {
-            this.albumOptions.push(item)
-        });
-        this.getImages();
+        this.username = sessionStorage.getItem('username');
+
+        this.getAlbums();
     },
     methods: {
-        getImages() {
-            this.images = [];
-            const username = this.username;
-
-            const params = {
-                username: username
-            };
-        
-            axios.post('/api/getImages', params)
-                .then(response => {
-                    response.data.forEach( item => {
-                        if (item.albums.includes(this.activeAlbum) && !item.deleted && !item.restricted){
-                            this.images.push(item);
-                        }
-                    });
-                    console.log(this.images);
-                })
-                .catch(error => {
-                    console.error('There was a problem with the request:', error);
-                })
-                .finally(() => {
-                    console.log(this.images);
-                })
-        },
-        updateFav(image){
-            if( image.favorite == false){
-                image.favorite = true
-            }
-            else {
-                image.favorite = false
-            }
-
+        createAlbum(){
             const params = {
                 username: this.username,
-                imageName: image.name,
-                updates: {
-                    favorite: image.favorite
-                }
+                albumName: this.createdAlbumName
             }
 
-            axios.post(`/api/update/updateImage`, params)
-                .then(response => {
-                    console.log(response);
+            axios.post('/api/create/createAlbum', params)
+                .then( res => {
+                    this.$toast.open({
+                    message: res.data.message,
+                    type: "success",
+                    duration: 5000,
+                    dismissible: true,
+                  });
                 })
-                .catch(err => {
-                    console.log(err);
-                })
-        },
-        makeRestricted(image){
-            const params = {
-                username: this.username,
-                imageName: image.name,
-                updates: {
-                    restricted: true
-                }
-            }
-
-            axios.post(`/api/update/updateImage`, params)
-                .then(response => {
-                    console.log(response);
-                })
-                .catch(err => {
-                    console.log(err);
+                .catch( ({response}) => {
+                  this.$toast.open({
+                    message: response.data.message,
+                    type: "error",
+                    duration: 5000,
+                    dismissible: true,
+                  });
                 })
                 .finally( () => {
-                    this.getImages();
+                    this.getAlbums();
+                    this.createdAlbumName = '';
                 })
         },
-        showOptions(index){
-            if (index != this.selectedImageIndex){
-                this.showAlbumOptions = true;
+
+        getAlbums(){
+            const params = {
+                username: this.username
             }
-            else if (this.showAlbumOptions == true && index == this.selectedImageIndex){
-                this.showAlbumOptions = false;
-            }
-            else {
-                this.showAlbumOptions = true
-            }
-            
-            this.selectedImageIndex = index
+            this.userAlbums = [];
+
+            axios.post('/api/get/getAlbums', params)
+                .then( res => {
+                    this.userAlbums = res.data.albums;
+                })
+                .catch( ({response}) => {
+                  this.$toast.open({
+                    message: response.data.message,
+                    type: "error",
+                    duration: 5000,
+                    dismissible: true,
+                  });
+                })
+        },
+
+        handleEnterKey(){
+            const element = document.getElementById('add-album-success-button');
+            element.click();
         }
     }
 }
 </script>
 
+
 <template>
   <div class="p-3 row">
-    <div class="album-name">{{ activeAlbum.toUpperCase() }}</div>
-    <div class="p-3 col-2 photo-container" v-for="(item, index) in images" :key="index">
-        <img :src="`data:${item.base64.mimetype};base64,${item.base64.data.toString('base64')}`" class="photo-image img-fluid">
-        <div class="image-buttons-tab">
-            <i class="fa-solid fa-circle-plus add-to-album-button" @click="showOptions(index)"></i>
-            <i class="mdi mdi-lock-open restrict-button" @click="makeRestricted(item)"></i>
-            <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
-            <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
-            <div v-if="showAlbumOptions && (index == selectedImageIndex)" class="album-dropdown">
-                <div class="album-item" v-for="(album, index) in albumOptions" :key="index">
-                    {{ album }}
-                </div>
-            </div>
-        </div>
+    <div class="col-2 albums-container added-albums-container" v-for="album in userAlbums" :key="album">
+        {{ album }}
     </div>
+    <div class="col-2 albums-container add-album-container" data-bs-toggle="modal" data-bs-target="#createAlbums">
+        <i class="fa-solid fa-folder-plus"></i>
+    </div>
+
+
+    <div class="modal fade" id="createAlbums" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-md">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Add a new album</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="text" class="create-album-input" v-model="createdAlbumName" placeholder="Enter album name"
+                @keydown.escape="createdAlbumName = ''"  
+                @keydown.enter="handleEnterKey"
+            >
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="createdAlbumName = ''">
+                Close
+            </button>
+            <button type="button" class="btn btn-success" id="add-album-success-button" data-bs-dismiss="modal" @click="createAlbum">
+                Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
   </div>
 </template>
 
+
 <style scoped>
-    .photo-container{
-        position: relative;
+    .albums-container{
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
     }
-    .photo-image{
-        filter: drop-shadow(0 0 8px gray);
-        border: thin solid rgb(185, 185, 185);
-    }
-    .photo-image:hover{
+    .add-album-container{
+        padding: .1em;
+        border-radius: .33em;
         cursor: pointer;
-        filter: drop-shadow(0 0 10px rgb(75, 75, 75));
-        scale: 1.0125;
+        font-size: 4em;
+        text-align: center;
+        color: rgb(67, 67, 67);
+    }
+    .add-album-container:hover{
+        background-color: lightgray;
+        color: black;;
     }
 
-    .album-name{
-        color: rgb(52, 52, 52);
+    .added-albums-container{
         font-size: 1.66em;
-        font-weight: bold;
-        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-        border-bottom: thin solid black;
+        border-radius: 1em;
+        margin: .15em;
+        cursor: pointer;
+    }
+    .added-albums-container:hover{
+        background-color: lightgray;
+    }
+
+    .create-album-input{
+      border: 0;
+      outline: 0;
+      padding: .44em;
+      filter: drop-shadow(0 0 .33em rgb(170, 170, 170));
+      width: 100%;
+    }
+    .create-album-input:focus{
+      filter: drop-shadow(0 0 .66em rgb(170, 170, 170));
+      outline: thin solid gray;
     }
 </style>

@@ -36,15 +36,6 @@ import axios from 'axios';
 export default {
   mounted(){
     this.username = sessionStorage.getItem('username');
-
-    const albums = JSON.parse(sessionStorage.getItem('albums'));
-    albums.albums.forEach(item => {
-      this.menu[2].children.push({
-        name: item,
-        type: 'album-child',
-        icon: { class: 'fa-solid fa-photo-film' }
-      })
-    });
   },
   methods: {
     handleItemClick(item){
@@ -53,17 +44,6 @@ export default {
       }
       else {
         this.passwordModal = false
-      }
-
-      if(item.type == 'album-child'){
-        this.$router.push('/albums');
-        sessionStorage.setItem('activeAlbum', item.name);
-        if(this.$route.path == '/albums'){
-          this.$router.go();
-        }
-      }
-      else {
-        sessionStorage.setItem('activeAlbum', null);
       }
     },
     submitPassword(){
@@ -120,7 +100,7 @@ export default {
         {
           name: 'Albums',
           icon: { class: 'mdi mdi-image-album' },
-          children: []
+          href: '/albums'
         },
         {
           name: 'Favorites',
