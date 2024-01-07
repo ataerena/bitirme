@@ -1,10 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
-import RegisterPage from './components/pages/RegisterPage.vue'
-import AllPhotos from './components/pages/AllPhotos.vue'
-import FavoritePhotos from './components/pages/FavoritePhotos.vue'
-import RestrictedPhotos from './components/pages/RestrictedPhotos.vue'
-import AlbumPages from './components/pages/AlbumPage.vue'
+import RegisterPage from './components/pages/RegisterPage.vue';
+import AllPhotos from './components/pages/AllPhotos.vue';
+import FavoritePhotos from './components/pages/FavoritePhotos.vue';
+import RestrictedPhotos from './components/pages/RestrictedPhotos.vue';
+import AlbumPages from './components/pages/AlbumPage.vue';
+import HomePage from './components/pages/HomePage.vue';
 
 
 const routes = [
@@ -33,6 +34,11 @@ const routes = [
     name: 'Albums',
     component: AlbumPages,
   },
+  {
+    path: '/homepage',
+    name: 'Homepage',
+    component: HomePage,
+  }
 
 ];
 

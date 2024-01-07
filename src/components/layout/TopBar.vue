@@ -6,10 +6,13 @@ export default {
     data(){
         return{
             file: null,
+            search: "",
+            images: [],
+            username: "",
         }
     },
     methods: {
-        ...mapActions(['logout']),
+        ...mapActions(['logout', 'setSearchTerm', 'setSearchResults']),
         logOut() {
             this.logout();
         },
@@ -43,7 +46,35 @@ export default {
           finally {
             window.location.reload();
           }
+        },
+
+        searchImages(){
+            const params = {
+                username: this.username,
+            }
+
+            let searchResults = [];
+            let searchTerm = this.search.toLowerCase();
+
+            if(this.search.length != 0){
+                axios.post('/api/getImages', params)
+                    .then ( res => {
+                        res.data.forEach( item => {
+                            this.$router.push('/homepage');
+                        
+                            if ( !item.restricted && !item.deleted && item.name.toLowerCase().includes(searchTerm)){
+                                searchResults.push(item);
+                            }
+                        
+                            this.setSearchTerm(this.search);
+                            this.setSearchResults(searchResults); 
+                        })
+                    })
+            }
         }
+    },
+    mounted(){
+        this.username = sessionStorage.getItem('username');
     }
 }
 </script>
@@ -54,8 +85,10 @@ export default {
         
         <div class="col-5 p-2">
             <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="search" placeholder="Search for a photo" class="p-2">
+                <i class="fa-solid fa-magnifying-glass" @click="searchImages"></i>
+                <input type="search" placeholder="Search for a photo" class="p-2" 
+                    v-model="search" @keydown.enter="searchImages"
+                >
             </div>
         </div>
         <div class="col top-buttons-wrapper">
@@ -101,6 +134,7 @@ export default {
         position: relative;
     }
     .fa-magnifying-glass {
+        cursor: pointer;
         z-index: 1;
         position: absolute;
         left: 10px;

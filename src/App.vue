@@ -65,6 +65,9 @@ export default {
               dismissible: true,
             });
           })
+          .finally( () => {
+            this.$router.push('/homepage')
+          })
     },
     goToRegister(){
       sessionStorage.setItem('register', true);

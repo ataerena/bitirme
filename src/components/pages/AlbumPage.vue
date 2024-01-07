@@ -18,6 +18,9 @@ export default {
 
             imagesToAdd: [],
             albumsToAddTo: [],
+          
+            imageToRemove: null,
+            albumToRemoveFrom: "",
         }
     },
     mounted(){
@@ -118,7 +121,6 @@ export default {
                             this.images.push(item);
                         }
                     });
-                    console.log(this.images);
                 })
                 .catch(error => {
                   console.error('There was a problem with the request:', error);
@@ -126,7 +128,6 @@ export default {
                 })
                 .finally(() => {
                   this.showAlbumImages = true;
-                  console.log('ALBUM IMAGES',this.images);
                 })
         },
         getNonAddedImages() {
@@ -143,7 +144,6 @@ export default {
                             this.nonExistantImages.push(item);
                         }
                     });
-                    console.log(this.images);
                 })
                 .catch(error => {
                   console.error('There was a problem with the request:', error);
@@ -172,6 +172,38 @@ export default {
                     console.log(err);
                 })
         },
+
+        addToAlbum(){
+          const names = this.imagesToAdd.map( item => item.name);
+
+          const params = {
+            username: sessionStorage.getItem('username'),
+            imageNames: names,
+            albumName: this.selectedAlbum
+          }
+
+          axios.post('/api/add/addImagesToAlbum', params)
+          .then( () => {
+            this.$toast.open({
+              message: `Images added to ${this.selectedAlbum}`,
+              type: "success",
+              duration: 5000,
+              dismissible: true,
+            });
+          })
+          .catch( ({response}) => {
+            this.$toast.open({
+              message: response.data.message,
+              type: "error",
+              duration: 5000,
+              dismissible: true,
+            });
+          })
+          .finally(() => {
+            this.getImages();
+          })
+        },
+
 
         selectAlbum(album){
           this.selectedAlbum = album;
@@ -203,25 +235,16 @@ export default {
           }
           else{
             this.imagesToAdd.push(image);
-            image.albums.forEach( item => {
-              this.albumsToAddTo.push(item);
-            })
           }
         },
 
-        addToAlbum(album){
-          this.albumsToAddTo.push(album);
-          this.imagesToAdd.forEach(image => {
-            this.updateAlbums(image);
-          });
-          this.imagesToAdd = [];
-          this.selectedAlbum = album;
-          this.getImages();
-        },
-        removeFromAlbum(image, album){
+        openRemoveAlbumModal(image, album){
           this.albumsToAddTo = this.albumsToAddTo.filter( item => item != album);
-          this.updateAlbums(image);
           this.selectedAlbum = album;
+          this.imageToRemove = image;
+        },
+        removeFromAlbum(){
+          this.updateAlbums(this.imageToRemove);
           this.getImages();
         }
     }
@@ -257,7 +280,9 @@ export default {
               <i class="mdi mdi-lock-open restrict-button" @click="makeRestricted(item)"></i>
               <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
               <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
-              <i class="fa-solid fa-square-minus remove-from-album-button" @click="removeFromAlbum(item, selectedAlbum)"></i>
+              <i class="fa-solid fa-square-minus remove-from-album-button" @click="openRemoveAlbumModal(item, selectedAlbum)"
+              data-bs-toggle="modal" data-bs-target="#removeFromAlbum"
+              ></i>
           </div>
       </div>
       <div class="col-2 albums-container add-album-container" data-bs-toggle="modal" 
@@ -332,8 +357,27 @@ export default {
             <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="imagesToAdd = []">
                 Cancel
             </button>
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="addToAlbum(selectedAlbum)">
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="addToAlbum">
                 Add
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="modal fade" id="removeFromAlbum" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Remove image from album?</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">
+                Cancel
+            </button>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="removeFromAlbum">
+                Remove
             </button>
           </div>
         </div>
