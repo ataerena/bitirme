@@ -12,6 +12,7 @@ export default {
             secondLastIndex: null,
             selectedImage: null,
             selectedImageAlbums: [],
+            imageToDelete: null,
         }
     },
     mounted(){
@@ -87,6 +88,26 @@ export default {
                     this.getImages();
                 })
         },
+        deleteImage(){
+            const params = {
+                username: this.username,
+                imageName: this.imageToDelete.name,
+                updates: {
+                    deleted: true
+                }
+            }
+
+            axios.post(`/api/update/updateImage`, params)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally( () => {
+                    this.getImages();
+                })
+        },
 
         showOptions(image){
             this.selectedImage = image;
@@ -126,7 +147,7 @@ export default {
                 .finally( () => {
                     this.getImages();
                 })
-        },
+        }
     }
 }
 </script>
@@ -139,37 +160,31 @@ export default {
             <i class="mdi mdi-lock-open restrict-button" @click="makeRestricted(item)"></i>
             <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
             <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
+            <i class="fa-solid fa-trash-can delete-image-button" data-bs-toggle="modal" data-bs-target="#deleteImage"
+                @click="imageToDelete = item"
+            >
+            </i>
         </div>
     </div>
 
 
-    <div class="modal fade" id="albumsModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="deleteImage" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog modal-dialog-centered modal-md">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Add to or remove from albums</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Are you sure you want to delete this image?</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">
-            <div class="row text-center" v-for="album in ['deneme', 'deneme2', 'deneme3']" :key="album">
-                <div class="col" style="font-size: 1.5em;">
-                    <i class="fa-solid fa-square-plus add-to-album-button m-1"
-                        v-if="false"
-                        @click="addToSelectedAlbums(album)"
-                    >
-                    </i>
-                    <i class="fa-solid fa-square-minus add-to-album-button m-1" 
-                        v-if="false"
-                        @click="popFromSelectedAlbums(album)"
-                    >
-                    </i>
-                    <span class="add-to-album-text m-1">{{ album }}</span>
-                </div>
-            </div>
+            <b>You will not be able to take this action back.</b>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="resetAlbumChanges">Close</button>
-            <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="updateAlbums">Save changes</button>
+            <button type="button" class="btn btn-danger" data-bs-dismiss="modal" @click="imageToDelete = null">
+                Cancel
+            </button>
+            <button type="button" class="btn btn-success" data-bs-dismiss="modal" @click="deleteImage">
+                Delete
+            </button>
           </div>
         </div>
       </div>
@@ -218,12 +233,12 @@ export default {
         cursor: pointer;
         color: black;
     }
-    .add-to-album-button{
-        color: gray;
+    .delete-image-button{
+        color: brown;   
     }
-    .add-to-album-button:hover{
+    .delete-image-button:hover{
         cursor: pointer;
-        color: black;
+        color: rgb(255, 0, 0);
     }
     .add-to-album-text{
         color: black;
@@ -231,6 +246,5 @@ export default {
     .add-to-album-text:hover{
         cursor: pointer;
     }
-    
 
 </style>

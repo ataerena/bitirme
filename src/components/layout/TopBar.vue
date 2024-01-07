@@ -100,7 +100,7 @@ export default {
                 Upload
             </div>
             <div class="col-1 top-button" style="max-height: inherit;">
-                <img src="../../assets/images/logo-fav.png" class="img-fluid">
+                <img src="../../assets/images/logo-fav.png" class="img-fluid" @click="$router.push('/homepage')">
             </div>
             <div class="col-1 text-center top-button">
                 <i class="fa-solid fa-arrow-right-from-bracket" @click="logOut"></i>
