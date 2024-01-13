@@ -53,7 +53,7 @@ export default {
                   });
                 })
                 .finally( () => {
-                    this.getAlbums();
+                    window.location.reload();
                     this.createdAlbumName = '';
                 })
         },
@@ -82,7 +82,7 @@ export default {
                   });
                 })
                 .finally( () => {
-                    this.getAlbums();
+                    window.location.reload();
                     this.selectedAlbum = '';
                 })
         },
@@ -200,7 +200,7 @@ export default {
             });
           })
           .finally(() => {
-            this.getImages();
+            window.location.reload();
           })
         },
 
@@ -405,7 +405,7 @@ export default {
         color: rgb(67, 67, 67);
     }
     .add-album-container:hover{
-        background-color: lightgray;
+        background-color: rgba(0, 0, 0, 0.315);
         color: black;;
     }
 

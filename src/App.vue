@@ -208,4 +208,23 @@ export default {
   transform: translateY(-50%);
   left: 17.5em;
 }
+
+
+
+.spinner-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(91, 91, 91, 0.403);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  z-index: 1000;
+  color: #002c34;
+}
 </style>

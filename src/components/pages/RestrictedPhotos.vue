@@ -82,7 +82,7 @@ export default {
                     console.log(err);
                 })
                 .finally( () => {
-                    this.getImages();
+                    window.location.reload();
                 })
         },
         deleteImage(){
@@ -102,7 +102,7 @@ export default {
                     console.log(err);
                 })
                 .finally( () => {
-                    this.getImages();
+                    window.location.reload();
                 })
         },
 

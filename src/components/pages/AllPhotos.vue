@@ -85,7 +85,7 @@ export default {
                     console.log(err);
                 })
                 .finally( () => {
-                    this.getImages();
+                    window.location.reload();
                 })
         },
         deleteImage(){
@@ -105,7 +105,7 @@ export default {
                     console.log(err);
                 })
                 .finally( () => {
-                    this.getImages();
+                    window.location.reload();
                 })
         },
 
@@ -123,31 +123,39 @@ export default {
             this.selectedImage = "";
             this.selectedImageAlbums = [];
         },
-        updateAlbums(){
-            const params = {
-                username: this.username,
-                imageName: this.selectedImage.name,
-                updates: {
-                    albums: this.selectedImageAlbums
-                }
-            }
+        async handleFileUpload(event) {
+          const username = sessionStorage.getItem('username');
+          const file = event.target.files[0];
+          const formData = new FormData();
+          formData.append('image', file);
+          formData.append('username', username);
+          this.loading = true;
 
-            axios.post(`/api/update/updateImage`, params)
-                .then(res => {
-                    this.$toast.open({
-                      message: res.data.message,
-                      type: "success",
-                      duration: 5000,
-                      dismissible: true,
-                    });
-                })
-                .catch(err => {
-                    console.log(err);
-                })
-                .finally( () => {
-                    this.getImages();
-                })
-        }
+          try {
+            const response = await axios.post('/api/file/upload', formData);
+            console.log(response);
+            
+            this.$toast.open({
+              message: response.data,
+              type: "success",
+              duration: 5000,
+              dismissible: true,
+            });
+          } 
+          catch ({response}) {
+            this.$toast.open({
+              message: response.data.message,
+              type: "error",
+              duration: 5000,
+              dismissible: true,
+            });
+          }
+
+          finally {
+            this.loading = false
+            window.location.reload();
+          }
+        },
     }
 }
 </script>
@@ -165,6 +173,12 @@ export default {
             >
             </i>
         </div>
+    </div>
+    <div class="col-2 photo-container add-photo-container" @click="$refs.fileInput.click()">
+        <i class="fa-solid fa-circle-plus"></i>
+        <input type="file" accept="image/jpeg, image/png" style="display: none;" 
+            ref="fileInput" @change="handleFileUpload($event)"
+        >
     </div>
 
 
@@ -193,8 +207,27 @@ export default {
 </template>
 
 <style>
+
+    .add-photo-container{
+        padding: .1em;
+        border-radius: .33em;
+        cursor: pointer;
+        font-size: 4em;
+        text-align: center;
+        color: rgb(67, 67, 67);
+
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        align-items: center;
+    }
+    .add-photo-container:hover{
+        background-color: rgba(0, 0, 0, 0.315);
+        color: black;;
+    }
     .photo-container{
         position: relative;
+        margin-top: .5em !important;
     }
     .photo-image{
         filter: drop-shadow(0 0 8px gray);

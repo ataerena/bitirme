@@ -9,6 +9,7 @@ export default {
             search: "",
             images: [],
             username: "",
+            loading: false,
         }
     },
     methods: {
@@ -22,6 +23,7 @@ export default {
           const formData = new FormData();
           formData.append('image', file);
           formData.append('username', username);
+          this.loading = true;
 
           try {
             const response = await axios.post('/api/file/upload', formData);
@@ -44,6 +46,7 @@ export default {
           }
 
           finally {
+            this.loading = false
             window.location.reload();
           }
         },
@@ -82,28 +85,39 @@ export default {
 <template>
     <div class="row p-4 pb-2">
         
-        
-        <div class="col-5 p-2">
-            <div class="search-container">
-                <i class="fa-solid fa-magnifying-glass" @click="searchImages"></i>
-                <input type="search" placeholder="Search for a photo" class="p-2" 
-                    v-model="search" @keydown.enter="searchImages"
-                >
+        <div class="spinner-container" v-if="loading == true">
+            <div class="spinner-border" role="info">
+              <span class="sr-only">Loading...</span>
+            </div>
+            <div class="row">
+                <strong>Processing images...</strong>
+                <strong>Do not leave this page!</strong>
             </div>
         </div>
-        <div class="col top-buttons-wrapper">
-            <div class="col-3 mr-5 top-button" @click="$refs.fileInput.click()">
-                <i class="fa-solid fa-cloud-arrow-up" style="color: rgb(93, 93, 93);"></i>
-                <input type="file" accept="image/*" style="display: none;" 
-                    ref="fileInput" @change="handleFileUpload($event)"
-                >
-                Upload
+        
+        <div class="row" v-else>
+            <div class="col-5 p-2">
+                <div class="search-container">
+                    <i class="fa-solid fa-magnifying-glass" @click="searchImages"></i>
+                    <input type="search" placeholder="Search for a photo" class="p-2" 
+                        v-model="search" @keydown.enter="searchImages"
+                    >
+                </div>
             </div>
-            <div class="col-1 top-button" style="max-height: inherit;">
-                <img src="../../assets/images/logo-fav.png" class="img-fluid" @click="$router.push('/homepage')">
-            </div>
-            <div class="col-1 text-center top-button">
-                <i class="fa-solid fa-arrow-right-from-bracket" @click="logOut"></i>
+            <div class="col top-buttons-wrapper">
+                <div class="col-3 mr-5 top-button" @click="$refs.fileInput.click()">
+                    <i class="fa-solid fa-cloud-arrow-up" style="color: rgb(93, 93, 93);"></i>
+                    <input type="file" accept="image/jpeg, image/png" style="display: none;" 
+                        ref="fileInput" @change="handleFileUpload($event)"
+                    >
+                    Upload
+                </div>
+                <div class="col-1 top-button" style="max-height: inherit;">
+                    <img src="../../assets/images/logo-fav.png" class="img-fluid" @click="$router.push('/homepage')">
+                </div>
+                <div class="col-1 text-center top-button">
+                    <i class="fa-solid fa-arrow-right-from-bracket" @click="logOut"></i>
+                </div>
             </div>
         </div>
     </div>
