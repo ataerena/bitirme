@@ -246,7 +246,53 @@ export default {
         removeFromAlbum(){
           this.updateAlbums(this.imageToRemove);
           this.getImages();
-        }
+        },
+
+
+        updateFav(image){
+            if( image.favorite == false){
+                image.favorite = true
+            }
+            else {
+                image.favorite = false
+            }
+
+            const params = {
+                username: this.username,
+                imageName: image.name,
+                updates: {
+                    favorite: image.favorite
+                }
+            }
+
+            axios.post(`/api/update/updateImage`, params)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+        },
+        makeRestricted(image){
+            const params = {
+                username: this.username,
+                imageName: image.name,
+                updates: {
+                    restricted: true
+                }
+            }
+
+            axios.post(`/api/update/updateImage`, params)
+                .then(response => {
+                    console.log(response);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+                .finally( () => {
+                    window.location.reload();
+                })
+        },
     }
 }
 </script>

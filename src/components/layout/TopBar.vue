@@ -91,7 +91,7 @@ export default {
             </div>
             <div class="row">
                 <strong>Processing images...</strong>
-                <strong>Do not leave this page!</strong>
+                <strong>Please wait...</strong>
             </div>
         </div>
         

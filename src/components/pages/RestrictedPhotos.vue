@@ -129,7 +129,7 @@ export default {
     <div class="p-3 col-2 photo-container" v-for="(item, index) in images" :key="index">
         <img :src="`data:${item.base64.mimetype};base64,${item.base64.data.toString('base64')}`" class="photo-image img-fluid">
         <div class="image-buttons-tab">
-            <i class="mdi mdi-lock-open restrict-button" @click="makeUnrestricted(item)"></i>
+            <i class="mdi mdi-lock restrict-button" @click="makeUnrestricted(item)"></i>
             <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
             <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
             <i class="fa-solid fa-trash-can delete-image-button" data-bs-toggle="modal" data-bs-target="#deleteImage"

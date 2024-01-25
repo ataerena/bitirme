@@ -13,6 +13,8 @@ export default {
             selectedImage: null,
             selectedImageAlbums: [],
             imageToDelete: null,
+            
+            loading: false,
         }
     },
     mounted(){
@@ -162,23 +164,34 @@ export default {
 
 <template>
   <div class="p-3 row">
-    <div class="p-3 col-2 photo-container" v-for="(item, index) in images" :key="index">
-        <img :src="`data:${item.base64.mimetype};base64,${item.base64.data.toString('base64')}`" class="photo-image img-fluid">
-        <div class="image-buttons-tab">
-            <i class="mdi mdi-lock-open restrict-button" @click="makeRestricted(item)"></i>
-            <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
-            <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
-            <i class="fa-solid fa-trash-can delete-image-button" data-bs-toggle="modal" data-bs-target="#deleteImage"
-                @click="imageToDelete = item"
-            >
-            </i>
+    <div class="spinner-container" v-if="loading == true">
+        <div class="spinner-border" role="info">
+          <span class="sr-only">Loading...</span>
+        </div>
+        <div class="row">
+            <strong>Processing images...</strong>
+            <strong>Please wait...</strong>
         </div>
     </div>
-    <div class="col-2 photo-container add-photo-container" @click="$refs.fileInput.click()">
-        <i class="fa-solid fa-circle-plus"></i>
-        <input type="file" accept="image/jpeg, image/png" style="display: none;" 
-            ref="fileInput" @change="handleFileUpload($event)"
-        >
+    <div class="row">
+        <div class="p-3 col-2 photo-container" v-for="(item, index) in images" :key="index">
+            <img :src="`data:${item.base64.mimetype};base64,${item.base64.data.toString('base64')}`" class="photo-image img-fluid">
+            <div class="image-buttons-tab">
+                <i class="mdi mdi-lock-open restrict-button" @click="makeRestricted(item)"></i>
+                <i class="fa-solid fa-heart favorite-button" v-if="item.favorite" @click="updateFav(item)"></i>
+                <i class="fa-regular fa-heart favorite-button" v-if="!item.favorite" @click="updateFav(item)"></i>
+                <i class="fa-solid fa-trash-can delete-image-button" data-bs-toggle="modal" data-bs-target="#deleteImage"
+                    @click="imageToDelete = item"
+                >
+                </i>
+            </div>
+        </div>
+        <div class="col-2 photo-container add-photo-container" @click="$refs.fileInput.click()">
+            <i class="fa-solid fa-circle-plus"></i>
+            <input type="file" accept="image/jpeg, image/png" style="display: none;" 
+                ref="fileInput" @change="handleFileUpload($event)"
+            >
+        </div>
     </div>
 
 
