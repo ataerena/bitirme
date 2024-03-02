@@ -1,3 +1,6 @@
+Vue is way better than React and you cannot change my opinion.
+
+
 # frontend
 
 ## Project setup
